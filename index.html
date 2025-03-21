@@ -3,41 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click Game</title>
+    <title>Mini Games Collection</title>
     <style>
         body {
             margin: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             background-color: #f3f3f3;
             font-family: Arial, sans-serif;
+        }
+        .game-container {
+            display: none;
             position: relative;
+            width: 80vw;
+            height: 80vh;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        #score {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 24px;
-            font-weight: bold;
+        .menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        #target {
-            position: absolute;
-            background-color: blue;
-            color: white;
-            padding: 15px;
-            border-radius: 50%;
-            border: none;
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div id="score">Score: 0</div>
-    <button id="target">Click Me!</button>
+    <div class="menu">
+        <h1>Choose a Game</h1>
+        <button onclick="showGame('click-game')">Click Game</button>
+        <button onclick="showGame('tic-tac-toe')">Tic-Tac-Toe</button>
+        <button onclick="showGame('rock-paper-scissors')">Rock, Paper, Scissors</button>
+    </div>
+    
+    <div id="click-game" class="game-container">
+        <div id="score">Score: 0</div>
+        <button id="target">Click Me!</button>
+    </div>
+    
+    <div id="tic-tac-toe" class="game-container">
+        <h2>Tic-Tac-Toe</h2>
+        <canvas id="ticTacToeCanvas" width="300" height="300" style="border: 2px solid black;"></canvas>
+    </div>
+    
+    <div id="rock-paper-scissors" class="game-container">
+        <h2>Rock, Paper, Scissors</h2>
+        <p>Choose: </p>
+        <button onclick="playRPS('rock')">Rock</button>
+        <button onclick="playRPS('paper')">Paper</button>
+        <button onclick="playRPS('scissors')">Scissors</button>
+        <p id="rps-result"></p>
+    </div>
     
     <script>
+        function showGame(gameId) {
+            document.querySelectorAll('.game-container').forEach(game => game.style.display = 'none');
+            document.getElementById(gameId).style.display = 'block';
+        }
+        
+        // Click Game
         let score = 0;
         const scoreDisplay = document.getElementById("score");
         const target = document.getElementById("target");
@@ -45,6 +79,7 @@
         function moveTarget() {
             const x = Math.floor(Math.random() * 90) + 5;
             const y = Math.floor(Math.random() * 90) + 5;
+            target.style.position = "absolute";
             target.style.left = `${x}%`;
             target.style.top = `${y}%`;
             score++;
@@ -52,6 +87,25 @@
         }
 
         target.addEventListener("click", moveTarget);
+        
+        // Rock Paper Scissors
+        function playRPS(choice) {
+            const options = ["rock", "paper", "scissors"];
+            const computerChoice = options[Math.floor(Math.random() * 3)];
+            let result = "";
+            if (choice === computerChoice) {
+                result = "It's a tie!";
+            } else if (
+                (choice === "rock" && computerChoice === "scissors") ||
+                (choice === "paper" && computerChoice === "rock") ||
+                (choice === "scissors" && computerChoice === "paper")
+            ) {
+                result = "You win!";
+            } else {
+                result = "Computer wins!";
+            }
+            document.getElementById("rps-result").textContent = `Computer chose ${computerChoice}. ${result}`;
+        }
     </script>
 </body>
 </html>
