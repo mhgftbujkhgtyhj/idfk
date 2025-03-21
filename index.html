@@ -48,6 +48,7 @@
         <button onclick="showGame('tic-tac-toe')">Tic-Tac-Toe</button>
         <button onclick="showGame('rock-paper-scissors')">Rock, Paper, Scissors</button>
         <button onclick="showGame('fortnite')">Fortnite Clone</button>
+        <button onclick="showGame('tube-jumpers')">Tube Jumpers</button>
     </div>
     
     <div id="click-game" class="game-container">
@@ -74,81 +75,44 @@
         <canvas id="fortniteCanvas" width="600" height="400"></canvas>
     </div>
     
+    <div id="tube-jumpers" class="game-container">
+        <h2>Tube Jumpers</h2>
+        <canvas id="tubeJumpersCanvas" width="600" height="400"></canvas>
+    </div>
+    
     <script>
         function showGame(gameId) {
             document.querySelectorAll('.game-container').forEach(game => game.style.display = 'none');
             document.getElementById(gameId).style.display = 'block';
         }
         
-        // Click Game
-        let score = 0;
-        const scoreDisplay = document.getElementById("score");
-        const target = document.getElementById("target");
+        // Tube Jumpers
+        const tubeCanvas = document.getElementById("tubeJumpersCanvas");
+        const tubeCtx = tubeCanvas.getContext("2d");
+        let playerY = 300;
+        let gravity = 2;
+        let jumpStrength = 20;
 
-        function moveTarget() {
-            const x = Math.floor(Math.random() * 90) + 5;
-            const y = Math.floor(Math.random() * 90) + 5;
-            target.style.position = "absolute";
-            target.style.left = `${x}%`;
-            target.style.top = `${y}%`;
-            score++;
-            scoreDisplay.textContent = `Score: ${score}`;
+        function drawTubeGame() {
+            tubeCtx.clearRect(0, 0, tubeCanvas.width, tubeCanvas.height);
+            tubeCtx.fillStyle = "blue";
+            tubeCtx.fillRect(50, playerY, 20, 20);
+            playerY += gravity;
         }
 
-        target.addEventListener("click", moveTarget);
-        
-        // Rock Paper Scissors
-        function playRPS(choice) {
-            const options = ["rock", "paper", "scissors"];
-            const computerChoice = options[Math.floor(Math.random() * 3)];
-            let result = "";
-            if (choice === computerChoice) {
-                result = "It's a tie!";
-            } else if (
-                (choice === "rock" && computerChoice === "scissors") ||
-                (choice === "paper" && computerChoice === "rock") ||
-                (choice === "scissors" && computerChoice === "paper")
-            ) {
-                result = "You win!";
-            } else {
-                result = "Computer wins!";
-            }
-            document.getElementById("rps-result").textContent = `Computer chose ${computerChoice}. ${result}`;
-        }
-        
-        // Fortnite-Inspired Shooter
-        const canvas = document.getElementById("fortniteCanvas");
-        const ctx = canvas.getContext("2d");
-        let player = { x: 50, y: 200, size: 20 };
-        let bullets = [];
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "blue";
-            ctx.fillRect(player.x, player.y, player.size, player.size);
-            ctx.fillStyle = "red";
-            bullets.forEach((bullet, index) => {
-                bullet.x += 5;
-                ctx.fillRect(bullet.x, bullet.y, 10, 5);
-                if (bullet.x > canvas.width) bullets.splice(index, 1);
-            });
-        }
-
-        function shoot() {
-            bullets.push({ x: player.x + 20, y: player.y + 10 });
+        function jump() {
+            playerY -= jumpStrength;
         }
 
         window.addEventListener("keydown", (e) => {
-            if (e.key === "ArrowUp" && player.y > 0) player.y -= 10;
-            if (e.key === "ArrowDown" && player.y < canvas.height - player.size) player.y += 10;
-            if (e.key === " ") shoot();
+            if (e.key === " ") jump();
         });
 
-        function gameLoop() {
-            draw();
-            requestAnimationFrame(gameLoop);
+        function gameLoopTube() {
+            drawTubeGame();
+            requestAnimationFrame(gameLoopTube);
         }
-        gameLoop();
+        gameLoopTube();
     </script>
 </body>
 </html>
