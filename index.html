@@ -36,6 +36,9 @@
             font-size: 16px;
             cursor: pointer;
         }
+        canvas {
+            background: green;
+        }
     </style>
 </head>
 <body>
@@ -44,6 +47,7 @@
         <button onclick="showGame('click-game')">Click Game</button>
         <button onclick="showGame('tic-tac-toe')">Tic-Tac-Toe</button>
         <button onclick="showGame('rock-paper-scissors')">Rock, Paper, Scissors</button>
+        <button onclick="showGame('fortnite')">Fortnite Clone</button>
     </div>
     
     <div id="click-game" class="game-container">
@@ -63,6 +67,11 @@
         <button onclick="playRPS('paper')">Paper</button>
         <button onclick="playRPS('scissors')">Scissors</button>
         <p id="rps-result"></p>
+    </div>
+    
+    <div id="fortnite" class="game-container">
+        <h2>Fortnite-Inspired Shooter</h2>
+        <canvas id="fortniteCanvas" width="600" height="400"></canvas>
     </div>
     
     <script>
@@ -106,6 +115,40 @@
             }
             document.getElementById("rps-result").textContent = `Computer chose ${computerChoice}. ${result}`;
         }
+        
+        // Fortnite-Inspired Shooter
+        const canvas = document.getElementById("fortniteCanvas");
+        const ctx = canvas.getContext("2d");
+        let player = { x: 50, y: 200, size: 20 };
+        let bullets = [];
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "blue";
+            ctx.fillRect(player.x, player.y, player.size, player.size);
+            ctx.fillStyle = "red";
+            bullets.forEach((bullet, index) => {
+                bullet.x += 5;
+                ctx.fillRect(bullet.x, bullet.y, 10, 5);
+                if (bullet.x > canvas.width) bullets.splice(index, 1);
+            });
+        }
+
+        function shoot() {
+            bullets.push({ x: player.x + 20, y: player.y + 10 });
+        }
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowUp" && player.y > 0) player.y -= 10;
+            if (e.key === "ArrowDown" && player.y < canvas.height - player.size) player.y += 10;
+            if (e.key === " ") shoot();
+        });
+
+        function gameLoop() {
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+        gameLoop();
     </script>
 </body>
 </html>
