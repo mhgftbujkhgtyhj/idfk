@@ -1,5 +1,57 @@
-<html>
-  <title>hi</title>
-  <iframe src="https://www.w3schools.com" title="W3Schools Free Online Web Tutorials"></iframe>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f3f3f3;
+            font-family: Arial, sans-serif;
+            position: relative;
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #target {
+            position: absolute;
+            background-color: blue;
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="score">Score: 0</div>
+    <button id="target">Click Me!</button>
+    
+    <script>
+        let score = 0;
+        const scoreDisplay = document.getElementById("score");
+        const target = document.getElementById("target");
+
+        function moveTarget() {
+            const x = Math.floor(Math.random() * 90) + 5;
+            const y = Math.floor(Math.random() * 90) + 5;
+            target.style.left = `${x}%`;
+            target.style.top = `${y}%`;
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+        }
+
+        target.addEventListener("click", moveTarget);
+    </script>
+</body>
 </html>
-simile
