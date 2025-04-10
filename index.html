@@ -1,118 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Games Collection</title>
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f3f3f3;
-            font-family: Arial, sans-serif;
-        }
-        .game-container {
-            display: none;
-            position: relative;
-            width: 80vw;
-            height: 80vh;
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .menu {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        button {
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        canvas {
-            background: green;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dino Game</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f4f4f4;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #game {
+      width: 100%;
+      max-width: 600px;
+      height: 200px;
+      background: white;
+      border-bottom: 2px solid #333;
+      position: relative;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+    #dino {
+      width: 40px;
+      height: 40px;
+      background: url('https://i.imgur.com/lKJiT77.png') no-repeat center/contain;
+      position: absolute;
+      bottom: 0;
+      left: 50px;
+    }
+    #cactus {
+      width: 25px;
+      height: 50px;
+      background: url('https://i.imgur.com/GzrLHZ8.png') no-repeat center/contain;
+      position: absolute;
+      bottom: 0;
+      right: -25px;
+    }
+    #score {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    #gameOver {
+      display: none;
+      text-align: center;
+      font-size: 24px;
+      margin-top: 20px;
+      color: red;
+    }
+    #restart {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      body::after {
+        content: 'Tap anywhere to jump';
+        font-size: 16px;
+        color: #666;
+        margin-top: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="menu">
-        <h1>Choose a Game</h1>
-        <button onclick="showGame('click-game')">Click Game</button>
-        <button onclick="showGame('tic-tac-toe')">Tic-Tac-Toe</button>
-        <button onclick="showGame('rock-paper-scissors')">Rock, Paper, Scissors</button>
-        <button onclick="showGame('fortnite')">Fortnite Clone</button>
-        <button onclick="showGame('tube-jumpers')">Tube Jumpers</button>
-    </div>
-    
-    <div id="click-game" class="game-container">
-        <div id="score">Score: 0</div>
-        <button id="target">Click Me!</button>
-    </div>
-    
-    <div id="tic-tac-toe" class="game-container">
-        <h2>Tic-Tac-Toe</h2>
-        <canvas id="ticTacToeCanvas" width="300" height="300" style="border: 2px solid black;"></canvas>
-    </div>
-    
-    <div id="rock-paper-scissors" class="game-container">
-        <h2>Rock, Paper, Scissors</h2>
-        <p>Choose: </p>
-        <button onclick="playRPS('rock')">Rock</button>
-        <button onclick="playRPS('paper')">Paper</button>
-        <button onclick="playRPS('scissors')">Scissors</button>
-        <p id="rps-result"></p>
-    </div>
-    
-    <div id="fortnite" class="game-container">
-        <h2>Fortnite-Inspired Shooter</h2>
-        <canvas id="fortniteCanvas" width="600" height="400"></canvas>
-    </div>
-    
-    <div id="tube-jumpers" class="game-container">
-        <h2>Tube Jumpers</h2>
-        <canvas id="tubeJumpersCanvas" width="600" height="400"></canvas>
-    </div>
-    
-    <script>
-        function showGame(gameId) {
-            document.querySelectorAll('.game-container').forEach(game => game.style.display = 'none');
-            document.getElementById(gameId).style.display = 'block';
-        }
-        
-        // Tube Jumpers
-        const tubeCanvas = document.getElementById("tubeJumpersCanvas");
-        const tubeCtx = tubeCanvas.getContext("2d");
-        let playerY = 300;
-        let gravity = 2;
-        let jumpStrength = 20;
+  <h1>Dino Game 🦖</h1>
+  <div id="score">Score: 0</div>
+  <div id="game">
+    <div id="dino"></div>
+    <div id="cactus"></div>
+  </div>
+  <div id="gameOver">Game Over!</div>
+  <button id="restart">Restart</button>
 
-        function drawTubeGame() {
-            tubeCtx.clearRect(0, 0, tubeCanvas.width, tubeCanvas.height);
-            tubeCtx.fillStyle = "blue";
-            tubeCtx.fillRect(50, playerY, 20, 20);
-            playerY += gravity;
-        }
+  <script>
+    const dino = document.getElementById('dino');
+    const cactus = document.getElementById('cactus');
+    const scoreEl = document.getElementById('score');
+    const gameOverEl = document.getElementById('gameOver');
+    const restartBtn = document.getElementById('restart');
 
-        function jump() {
-            playerY -= jumpStrength;
-        }
+    let isJumping = false;
+    let score = 0;
+    let cactusInterval;
+    let scoreInterval;
+    let isGameOver = false;
 
-        window.addEventListener("keydown", (e) => {
-            if (e.key === " ") jump();
-        });
+    function jump() {
+      if (isJumping || isGameOver) return;
 
-        function gameLoopTube() {
-            drawTubeGame();
-            requestAnimationFrame(gameLoopTube);
+      isJumping = true;
+      let position = 0;
+      const upInterval = setInterval(() => {
+        if (position >= 150) {
+          clearInterval(upInterval);
+          const downInterval = setInterval(() => {
+            if (position <= 0) {
+              clearInterval(downInterval);
+              isJumping = false;
+            } else {
+              position -= 5;
+              dino.style.bottom = position + 'px';
+            }
+          }, 20);
+        } else {
+          position += 5;
+          dino.style.bottom = position + 'px';
         }
-        gameLoopTube();
-    </script>
+      }, 20);
+    }
+
+    function startGame() {
+      isGameOver = false;
+      gameOverEl.style.display = 'none';
+      restartBtn.style.display = 'none';
+      cactus.style.left = '600px';
+      dino.style.bottom = '0px';
+      score = 0;
+      scoreEl.textContent = `Score: ${score}`;
+
+      cactusInterval = setInterval(() => {
+        let cactusLeft = parseInt(getComputedStyle(cactus).left);
+        if (cactusLeft < -25) {
+          cactusLeft = 600;
+        } else {
+          cactusLeft -= 10;
+        }
+        cactus.style.left = cactusLeft + 'px';
+
+        let dinoBottom = parseInt(getComputedStyle(dino).bottom);
+        if (cactusLeft > 50 && cactusLeft < 90 && dinoBottom < 40) {
+          gameOver();
+        }
+      }, 30);
+
+      scoreInterval = setInterval(() => {
+        score += 1;
+        scoreEl.textContent = `Score: ${score}`;
+      }, 200);
+    }
+
+    function gameOver() {
+      clearInterval(cactusInterval);
+      clearInterval(scoreInterval);
+      isGameOver = true;
+      gameOverEl.style.display = 'block';
+      restartBtn.style.display = 'inline-block';
+    }
+
+    function restartGame() {
+      startGame();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.code === 'Space') jump();
+    });
+
+    document.addEventListener('touchstart', () => {
+      jump();
+    });
+
+    restartBtn.addEventListener('click', restartGame);
+
+    startGame();
+  </script>
 </body>
 </html>
