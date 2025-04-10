@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { CalendarDays, Film, Info, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function MinecraftMovieFanSite() {
+export default function MinecraftMovieFanSite() 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1a1a1a] to-[#121212] text-white p-6 space-y-10">
       {/* Hero Section */}
