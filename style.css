@@ -1,1 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dino Game</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f4f4f4;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #game {
+      width: 100%;
+      max-width: 600px;
+      height: 200px;
+      background: white;
+      border-bottom: 2px solid #333;
+      position: relative;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+    #dino {
+      width: 40px;
+      height: 40px;
+      background: url('https://i.imgur.com/lKJiT77.png') no-repeat center/contain;
+      position: absolute;
+      bottom: 0;
+      left: 50px;
+    }
+    #cactus {
+      width: 25px;
+      height: 50px;
+      background: url('https://i.imgur.com/GzrLHZ8.png') no-repeat center/contain;
+      position: absolute;
+      bottom: 0;
+      right: -25px;
+    }
+    #score {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    #gameOver {
+      display: none;
+      text-align: center;
+      font-size: 24px;
+      margin-top: 20px;
+      color: red;
+    }
+    #restart {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
 
+    @media (hover: none) and (pointer: coarse) {
+      body::after {
+        content: 'Tap anywhere to jump';
+        font-size: 16px;
+        color: #666;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Dino Game 🦖</h1>
+  <div id="score">Score: 0</div>
+  <div id="game">
+    <div id="dino"></div>
+    <div id="cactus"></div>
+  </div>
+  <div id="gameOver">Game Over!</div>
+  <button id="restart">Restart</button>
+
+  <script>
+    const dino = document.getElementById('dino');
+    const cactus = document.getElementById('cactus');
+    const scoreEl = document.getElementById('score');
+    const gameOverEl = document.getElementById('gameOver');
+    const restartBtn = document.getElementById('restart');
+
+    let isJumping = false;
+    let score = 0;
+    let cactusInterval;
+    let scoreInterval;
+    let isGameOver = false;
+
+    function jump() {
+      if (isJumping || isGameOver) return;
+
+      isJumping = true;
+      let position = 0;
+      const upInterval = setInterval(() => {
+        if (position >= 150) {
+          clearInterval(upInterval);
+          const downInterval = setInterval(() => {
+            if (position <= 0) {
+              clearInterval(downInterval);
+              isJumping = false;
+            } else {
+              position -= 5;
+              dino.style.bottom = position + 'px';
+            }
+          }, 20);
+        } else {
+          position += 5;
+          dino.style.bottom = position + 'px';
+        }
+      }, 20);
+    }
+
+    function startGame() {
+      isGameOver = false;
+      gameOverEl.style.display = 'none';
+      restartBtn.style.display = 'none';
+      cactus.style.left = '600px';
+      dino.style.bottom = '0px
